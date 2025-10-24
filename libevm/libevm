@@ -682,8 +682,13 @@ _libevm_app_getopts_case() {
 _hex_check() {
   local \
     _string="${1}" \
+    _exit \
     _suffix \
     _not_hex
+  _exit=1
+  if (( 1 < "${#}" )); then
+    _exit="${2}"
+  fi
   _suffix="${_string:2}"
   _not_hex="$( \
     echo \
@@ -699,7 +704,7 @@ _hex_check() {
     )
     _msg_error \
       "${_msg[*]}" \
-      1
+      "${_exit}"
   fi
 }
 
@@ -707,10 +712,16 @@ _hex_length_check() {
   local \
     _string="${1}" \
     _length="${2}" \
+    _exit \
     _suffix \
     _not_length
+  _exit=1
+  if (( 2 < "${#}" )); then
+    _exit="${3}"
+  fi
   _hex_check \
-    "${_string}"
+    "${_string}" \
+    "${_exit}"
   _suffix="${_string:2}"
   _not_length=""
   if [[ "${#_suffix}" != "${_length}" ]]; then
@@ -723,30 +734,42 @@ _hex_length_check() {
     )
     _msg_error \
       "${_msg[*]}" \
-      1
+      "${_exit}"
   fi
 }
 
 _tx_hash_sanity_check() {
   local \
-    _tx_hash="${1}"
+    _tx_hash="${1}" \
+    _exit
+  _exit=1
+  if (( 1 < "${#}" )); then
+    _exit="${2}"
+  fi 
   _tx_hash="$( \
     _lower \
       "${_tx_hash}")"
   _hex_length_check \
     "${_tx_hash}" \
-    "64"
+    "64" \
+    "${_exit}"
 }
 
 _address_sanity_check() {
   local \
-    _address="${1}"
+    _address="${1}" \
+    _exit
+  _exit=1
+  if (( 1 < "${#}" )); then
+    _exit="${2}"
+  fi
   _address="$( \
     _lower \
       "${_address}")"
   _hex_length_check \
     "${_address}" \
-    "40"
+    "40" \
+    "${_exit}"
 }
 
 _contract_artifacts_explorer_retrieve() {
